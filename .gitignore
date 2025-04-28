@@ -1,0 +1,7 @@
+!.gitignore
+
+app/venv
+
+mykey.asc
+
+src/__pycache__
