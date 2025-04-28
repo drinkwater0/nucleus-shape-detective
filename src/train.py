@@ -36,7 +36,7 @@ def main(args):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--img_dir", default="data/processed")
+    p.add_argument("--img_dir", default="data")
     p.add_argument("--csv", default="data/annotations/labels.csv")
     p.add_argument("--epochs", type=int, default=5)
     main(p.parse_args())
