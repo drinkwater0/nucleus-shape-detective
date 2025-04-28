@@ -1,52 +1,105 @@
-"""Utility helpers for Nucleus‑Shape Detective.
+"""Utility helpers for Nucleus‑Shape Detective – **v3**.
 
-Includes:
-* NucleusDataset – torchvision‑style dataset that reads images from disk.
-* evaluate(model, dl, device) – quick accuracy evaluator.
-* train_loop(...) – minimal training routine with progress printing.
+**Fixes**: smarter fallback when the *data* folder lives one level *above* the
+current working directory (the common "I executed from `src/`" slip‑up).  Now
+`NucleusDataset` tries, in order:
+
+1. `img_dir / filename` – what you specified.
+2. `img_dir.parent / filename` – one level up.
+3. `csv_basedir / filename` – sibling of the directory that holds
+   `annotations/labels.csv` (i.e. project‑root `/data`).
+
+If the image is still missing, you finally get a clear error message that
+lists every path it tried.
 """
+
+from __future__ import annotations
 
 import pathlib
 import time
+from typing import Sequence
 
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 from torchvision.io import read_image
 
+__all__ = ["NucleusDataset", "evaluate", "train_loop"]
+
 
 class NucleusDataset(torch.utils.data.Dataset):
-    """Image dataset for nucleus images classified as 'normal' or 'bleb'."""
+    """Torch dataset that reads microscope images listed in a CSV.
 
-    def __init__(self, img_dir, csv_path, transform=None):
-        self.img_dir = pathlib.Path(img_dir)
-        self.df = pd.read_csv(csv_path)
+    Designed to be **location‑robust** – you can run scripts from repo root,
+    `src/`, notebooks, wherever.
+    """
+
+    def __init__(
+        self,
+        img_dir: str | pathlib.Path,
+        csv_path: str | pathlib.Path,
+        transform=None,
+        *,
+        min_quality: int = 0,
+        drop_flags: Sequence[str] | None = ("foreign", "part"),
+    ) -> None:
+        self.img_dir = pathlib.Path(img_dir).expanduser().resolve()
+        self.csv_path = pathlib.Path(csv_path).expanduser().resolve()
+        self.csv_basedir = self.csv_path.parent.parent.resolve()  # .../data
+
+        df = pd.read_csv(self.csv_path)
+
+        if min_quality > 0 and "quality" in df.columns:
+            df = df[df["quality"] >= min_quality]
+
+        if drop_flags and "flags" in df.columns:
+            blocked = {f.lower() for f in drop_flags}
+            df = df[df["flags"].apply(lambda cell: pd.isna(cell) or blocked.isdisjoint({t.strip().lower() for t in str(cell).split(",")}))]
+
+        if df.empty:
+            raise ValueError("No samples left after filtering – check your criteria!")
+
+        self.df = df.reset_index(drop=True)
         self.transform = transform
-        # Map string labels to int 0/1
-        self.labels = self.df["label"].map({"normal": 0, "bleb": 1}).values
+        self.labels = self.df["label"].astype(int).values
 
+    # ----------------------------- helpers ------------------------------
+    def _resolve_path(self, filename: str) -> pathlib.Path:
+        """Return first existing path of the candidate locations."""
+        filename = filename.strip().lstrip("/")
+        trials = [
+            self.img_dir / filename,
+            self.img_dir.parent / filename,
+            self.csv_basedir / filename,
+        ]
+        for p in trials:
+            if p.is_file():
+                return p
+        # If we get here, report all tried paths for easier debugging
+        tried = "\n  - " + "\n  - ".join(map(str, trials))
+        raise FileNotFoundError(f"Image '{filename}' not found. Tried:{tried}")
+
+    # --------------------------- dataset API ---------------------------
     def __len__(self):
         return len(self.df)
 
     def __getitem__(self, idx):
-        img_path = self.img_dir / self.df.iloc[idx, 0]
-        img = read_image(str(img_path)).float() / 255.0  # [0,1] tensor
+        row = self.df.iloc[idx]
+        img_path = self._resolve_path(str(row["filename"]))
+        img = read_image(str(img_path)).float() / 255.0
         if self.transform:
             img = self.transform(img)
-        return img, self.labels[idx]
+        return img, int(row["label"])
 
 
+# --------------------------- eval + train ----------------------------
 @torch.inference_mode()
 def evaluate(model: torch.nn.Module, dl: DataLoader, device: str = "cpu") -> float:
-    """Return accuracy of *model* on the images in *dl*."""
     model.eval()
-    correct = 0
-    total = 0
+    correct = total = 0
     for x, y in dl:
         x, y = x.to(device), y.to(device)
-        logits = model(x)
-        preds = logits.argmax(1)
-        correct += (preds == y).sum().item()
+        correct += (model(x).argmax(1) == y).sum().item()
         total += y.size(0)
     return correct / total if total else 0.0
 
@@ -55,54 +108,32 @@ def train_loop(
     model: torch.nn.Module,
     train_dl: DataLoader,
     val_dl: DataLoader,
+    *,
     epochs: int = 5,
     lr: float = 1e-4,
     device: str = "cpu",
 ):
-    """Minimal supervised training loop.
-
-    Parameters
-    ----------
-    model : torch.nn.Module
-        The network to train (its final layer should already match the number of
-        classes).
-    train_dl, val_dl : DataLoader
-        Training and validation dataloaders.
-    epochs : int
-        Total number of passes over the training set.
-    lr : float
-        Learning rate for Adam.
-    device : str
-        "cpu" or "cuda".
-    """
     model.to(device)
     opt = torch.optim.Adam(model.parameters(), lr=lr)
-    crit = torch.nn.CrossEntropyLoss()
+    loss_fn = torch.nn.CrossEntropyLoss()
 
-    for epoch in range(1, epochs + 1):
+    for ep in range(1, epochs + 1):
         model.train()
-        running_loss = 0.0
-
+        run_loss = 0.0
         for x, y in train_dl:
             x, y = x.to(device), y.to(device)
-
             opt.zero_grad(set_to_none=True)
-            logits = model(x)
-            loss = crit(logits, y)
+            loss = loss_fn(model(x), y)
             loss.backward()
             opt.step()
-
-            running_loss += loss.item() * y.size(0)
+            run_loss += loss.item() * y.size(0)
 
         train_acc = evaluate(model, train_dl, device)
         val_acc = evaluate(model, val_dl, device)
-        avg_loss = running_loss / len(train_dl.dataset)
-
         print(
-            f"[{time.strftime('%H:%M:%S')}] "
-            f"Epoch {epoch:02d}/{epochs} | "
-            f"loss {avg_loss:.4f} | "
-            f"train acc {train_acc:.3f} | val acc {val_acc:.3f}",
+            f"[{time.strftime('%H:%M:%S')}] Ep {ep:02d}/{epochs} | "
+            f"loss {run_loss/len(train_dl.dataset):.4f} | "
+            f"train {train_acc:.3f} | val {val_acc:.3f}",
             flush=True,
         )
 
