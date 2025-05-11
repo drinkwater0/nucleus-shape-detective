@@ -8,6 +8,7 @@ A deep learning tool for detecting abnormal nuclear blebs in fluorescence micros
 - User-friendly web interface with drag-and-drop functionality
 - Support for various image formats (PNG, JPG, TIFF)
 - Pre-trained model included
+- Example dataset included for immediate testing
 - Easy training pipeline for custom datasets
 
 ## Project Structure

@@ -39,20 +39,6 @@ ENV/
 *.swp
 *.swo
 
-# Model files
-*.pt
-*.pth
-*.onnx
-*.h5
-*.hdf5
-*.weights
-
-# Data
-data/bleb/*
-data/normal/*
-!data/bleb/.gitkeep
-!data/normal/.gitkeep
-
 # Logs
 *.log
 logs/

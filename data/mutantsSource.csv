@@ -1,9 +1,3 @@
-1;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin A/C after virus infection (32 hpi);0;10;0;0
-2;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin B after virus infection (32 hpi);0;10;0;0
-3;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin A/C after virus infection (40 hpi);0;10;0;0
-4;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin B after virus infection (40 hpi);0;10;0;0
-5;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin A/C after virus infection (40 hpi);0;2;foreign;0
-6;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin A/C after virus infection (40 hpi);0;8;foreign,part;0
 7;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin B after virus infection (40 hpi);0;7;foreign;0
 8;https://hdl.handle.net/20.500.14178/2762;Mouse polyomavirus infection induces lamin reorganisation;Lamin B after virus infection (40 hpi);0;10;foreign,part;0
 9;https://pmc.ncbi.nlm.nih.gov/articles/PMC7102937/#ABS1;Mutant lamins cause nuclear envelope rupture and DNA damage in skeletal muscle cells;Lamin B;0;6;foreign;Figure 4. Lmna KO myonuclei have increased DNA damage in vitro and in vivo.
@@ -43,3 +37,25 @@
 43;https://bmcmolcellbiol.biomedcentral.com/articles/10.1186/1471-2121-5-30/figures/5;Cytoskeletal influences on nuclear shape in granulocytic HL-60 cells;Lamin B;0;10;0;Figure 6
 44;https://bmcmolcellbiol.biomedcentral.com/articles/10.1186/1471-2121-5-30/figures/5;Cytoskeletal influences on nuclear shape in granulocytic HL-60 cells;Lamin B;0;10;0;Figure 6
 45;https://bmcmolcellbiol.biomedcentral.com/articles/10.1186/1471-2121-5-30/figures/5;Cytoskeletal influences on nuclear shape in granulocytic HL-60 cells;Lamin B;0;10;0;Figure 6
+46;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;8;foreign;Fig. 3.
+47;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;7;foreign;Fig. 3.
+48;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;7;0;Fig. 4.
+49;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;7;0;Fig. 4.
+50;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;7;0;Fig. 4.
+51;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;7;0;Fig. 4.
+52;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;7;0;Fig. 4.
+53;https://pmc.ncbi.nlm.nih.gov/articles/PMC11883270/;Decreased DNA density is a better indicator of a nuclear bleb than lamin B loss;Lamin B;0;7;0;Fig. 6.
+54;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;0;0;7;0;Figure 1.
+55;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;0;0;7;0;Figure 1.
+56;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;0;0;7;0;Figure 1.
+57;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;0;0;7;0;Figure 1.
+58;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;0;0;7;0;Figure 1.
+59;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;0;0;7;0;Figure 1.
+60;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin A/C ;0;7;0;Figure 5.
+61;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin B1;0;7;0;Figure 5.
+62;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin B1;0;7;0;Figure 5.
+63;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin A/C ;0;7;foreign;Figure 5.
+64;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin B1;0;7;0;Figure 5.
+65;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin B1;0;7;0;Figure 5.
+66;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin A/C ;0;7;foreign;Figure 5.
+67;https://pmc.ncbi.nlm.nih.gov/articles/PMC9458464/;The BAF A12T mutation disrupts lamin A/C interaction, impairing robust repair of nuclear envelope ruptures in Nestor–Guillermo progeria syndrome cells;Lamin A/C ;0;7;foreign;Figure 5.
