@@ -29,6 +29,12 @@ nucleus-shape-detective/
 └── requirements.txt   # Project dependencies
 ```
 
+## Data
+
+Place your microscopy images in the appropriate directories:
+- `data/normal/` for normal nucleus images
+- `data/bleb/` for nucleus images with blebs
+
 ## Prerequisites
 
 - Python 3.8 or higher
