@@ -18,11 +18,13 @@ from __future__ import annotations
 import pathlib
 import time
 from typing import Sequence
+import numpy as np
 
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 from torchvision.io import read_image
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 __all__ = ["NucleusDataset", "evaluate", "train_loop"]
 
@@ -94,14 +96,21 @@ class NucleusDataset(torch.utils.data.Dataset):
 
 # --------------------------- eval + train ----------------------------
 @torch.inference_mode()
-def evaluate(model: torch.nn.Module, dl: DataLoader, device: str = "cpu") -> float:
+def evaluate(model: torch.nn.Module, dl: DataLoader, device: str = "cpu") -> tuple[float, float]:
     model.eval()
     correct = total = 0
+    total_loss = 0.0
+    loss_fn = torch.nn.CrossEntropyLoss()
+    
     for x, y in dl:
         x, y = x.to(device), y.to(device)
-        correct += (model(x).argmax(1) == y).sum().item()
+        outputs = model(x)
+        loss = loss_fn(outputs, y)
+        total_loss += loss.item() * y.size(0)
+        correct += (outputs.argmax(1) == y).sum().item()
         total += y.size(0)
-    return correct / total if total else 0.0
+    
+    return correct / total if total else 0.0, total_loss / total if total else 0.0
 
 
 def train_loop(
@@ -112,28 +121,64 @@ def train_loop(
     epochs: int = 5,
     lr: float = 1e-4,
     device: str = "cpu",
+    patience: int = 5,
 ):
     model.to(device)
     opt = torch.optim.Adam(model.parameters(), lr=lr)
+    scheduler = ReduceLROnPlateau(opt, mode='min', factor=0.5, patience=2)
     loss_fn = torch.nn.CrossEntropyLoss()
+    
+    best_val_loss = float('inf')
+    patience_counter = 0
+    best_model_state = None
 
     for ep in range(1, epochs + 1):
+        # Training
         model.train()
-        run_loss = 0.0
+        train_loss = 0.0
+        train_correct = 0
+        train_total = 0
+        
         for x, y in train_dl:
             x, y = x.to(device), y.to(device)
             opt.zero_grad(set_to_none=True)
-            loss = loss_fn(model(x), y)
+            outputs = model(x)
+            loss = loss_fn(outputs, y)
             loss.backward()
             opt.step()
-            run_loss += loss.item() * y.size(0)
+            
+            train_loss += loss.item() * y.size(0)
+            train_correct += (outputs.argmax(1) == y).sum().item()
+            train_total += y.size(0)
 
-        train_acc = evaluate(model, train_dl, device)
-        val_acc = evaluate(model, val_dl, device)
+        # Evaluation
+        train_acc, train_loss = train_correct / train_total, train_loss / train_total
+        val_acc, val_loss = evaluate(model, val_dl, device)
+        
+        # Learning rate scheduling
+        scheduler.step(val_loss)
+        
+        # Early stopping
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_model_state = model.state_dict().copy()
+            patience_counter = 0
+        else:
+            patience_counter += 1
+            
         print(
             f"[{time.strftime('%H:%M:%S')}] Ep {ep:02d}/{epochs} | "
-            f"loss {run_loss/len(train_dl.dataset):.4f} | "
-            f"train {train_acc:.3f} | val {val_acc:.3f}",
+            f"train loss {train_loss:.4f} | val loss {val_loss:.4f} | "
+            f"train acc {train_acc:.3f} | val acc {val_acc:.3f}",
             flush=True,
         )
+        
+        if patience_counter >= patience:
+            print(f"\nEarly stopping triggered after {ep} epochs")
+            break
+    
+    # Restore best model
+    if best_model_state is not None:
+        model.load_state_dict(best_model_state)
+        print("Restored best model state")
 
