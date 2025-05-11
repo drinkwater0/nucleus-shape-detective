@@ -1,9 +1,0 @@
-torch>=2.2
-torchvision
-pandas
-scikit-learn
-matplotlib
-albumentations
-streamlit
-pillow
-pytest
