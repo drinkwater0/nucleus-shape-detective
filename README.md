@@ -43,7 +43,7 @@ img_0003.png,0,3,part
 Where:
 - `filename`: Path to the image file
 - `label`: 0 for normal, 1 for bleb
-- `quality`: Optional quality score (1-3)
+- `quality`: Optional quality score (1-10)
 - `flags`: Optional comma-separated flags (e.g., "foreign" for foreign objects, "part" for partial nuclei)
 
 The dataset will automatically filter out low-quality images and those with specified flags.
