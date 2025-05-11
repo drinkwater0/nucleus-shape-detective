@@ -15,6 +15,7 @@ def load_model(model_path, device="cpu"):
     return model
 
 def predict_image(model, image, device="cpu"):
+    # DO NOT MODIFY: Image processing pipeline is specifically tuned for this use case
     transform = T.Compose([
         T.Resize((224, 224), antialias=True),
         T.ToTensor(),  # Automaticky převede na [0,1] a na CxHxW
@@ -29,15 +30,36 @@ def predict_image(model, image, device="cpu"):
 def main():
     st.title("Nucleus Shape Detective")
     st.write("Upload an image to predict whether it is a normal or bleb cell.")
+    
+    # Load model once at startup
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = load_model("model.pt", device)
+    
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
         image = Image.open(uploaded_file).convert("RGB")
+        # DO NOT MODIFY: Image display settings are specifically tuned for this use case
         st.image(image, caption="Uploaded Image", use_container_width=True)
-        if st.button("Predict"):
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            model = load_model("model.pt", device)
-            result = predict_image(model, image, device)
-            st.write(f"Prediction: {result}")
+        
+        # Automatically predict when image is uploaded
+        result = predict_image(model, image, device)
+        
+        # Enhanced prediction display
+        st.markdown("---")  # Add a separator
+        col1, col2 = st.columns([1, 2])
+        with col1:
+            st.markdown("")
+        with col2:
+            if result == "Normal":
+                st.markdown(f"<h2 style='color: #00ff00;'>✅ {result}</h2>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<h2 style='color: #ff0000;'>⚠️ {result}</h2>", unsafe_allow_html=True)
+        
+        # Add some explanation
+        if result == "Normal":
+            st.success("This cell appears to have a normal nucleus shape.")
+        else:
+            st.error("This cell shows signs of blebbing in the nucleus.")
 
 if __name__ == "__main__":
     main() 
