@@ -12,7 +12,7 @@ kde:
 import pandas as pd
 from pathlib import Path
 
-BASE = Path("/root/nucleus-shape-detective/data")               # kořen dat
+BASE = Path("./data")               # kořen dat
 OUT  = BASE / "annotations/labels.csv"
 
 def load_source(csv_path: Path, subdir: str, label: int) -> pd.DataFrame:
