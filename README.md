@@ -129,7 +129,7 @@ If you use this tool in your research, please cite:
 
 - [Add any acknowledgments here]
 
-## Quick start
+## Quick start
 ```bash
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
@@ -139,17 +139,4 @@ streamlit run app/app.py  # launch demo
 
 ## Model
 Baseline: ResNet‑18 (torchvision) fine‑tuned for 2 classes. Images are resized
-to 224 × 224 and histogram‑equalised.
-
-
- ## requirements.txt 
- torch>=2.2
- torchvision
- pandas
- scikit-learn
- matplotlib
- albumentations
- streamlit
- pillow
- pytest
- 
+to 224 × 224 and histogram‑equalised.
