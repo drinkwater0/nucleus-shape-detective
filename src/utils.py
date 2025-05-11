@@ -1,13 +1,13 @@
-"""Utility helpers for Nucleus‑Shape Detective – **v3**.
+"""Utility helpers for Nucleus‑Shape Detective – v3.
 
 **Fixes**: smarter fallback when the *data* folder lives one level *above* the
 current working directory (the common "I executed from `src/`" slip‑up).  Now
 `NucleusDataset` tries, in order:
 
-1. `img_dir / filename` – what you specified.
+1. `img_dir / filename` – what you specified.
 2. `img_dir.parent / filename` – one level up.
 3. `csv_basedir / filename` – sibling of the directory that holds
-   `annotations/labels.csv` (i.e. project‑root `/data`).
+   `annotations/labels.csv` (i.e. project‑root `/data`).
 
 If the image is still missing, you finally get a clear error message that
 lists every path it tried.
@@ -57,7 +57,7 @@ class NucleusDataset(torch.utils.data.Dataset):
             df = df[df["flags"].apply(lambda cell: pd.isna(cell) or blocked.isdisjoint({t.strip().lower() for t in str(cell).split(",")}))]
 
         if df.empty:
-            raise ValueError("No samples left after filtering – check your criteria!")
+            raise ValueError("No samples left after filtering – check your criteria!")
 
         self.df = df.reset_index(drop=True)
         self.transform = transform

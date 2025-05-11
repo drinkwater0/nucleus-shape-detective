@@ -31,6 +31,23 @@ nucleus-shape-detective/
 
 ## Data
 
+The project uses a CSV file to manage image labels and metadata. Create a file at `data/annotations/labels.csv` with the following columns:
+
+```
+filename,label,quality,flags
+img_0001.png,0,1,
+img_0002.png,1,2,foreign
+img_0003.png,0,3,part
+```
+
+Where:
+- `filename`: Path to the image file
+- `label`: 0 for normal, 1 for bleb
+- `quality`: Optional quality score (1-3)
+- `flags`: Optional comma-separated flags (e.g., "foreign" for foreign objects, "part" for partial nuclei)
+
+The dataset will automatically filter out low-quality images and those with specified flags.
+
 Place your microscopy images in the appropriate directories:
 - `data/normal/` for normal nucleus images
 - `data/bleb/` for nucleus images with blebs
@@ -94,9 +111,10 @@ The web interface will open in your default browser. You can:
    - Place your microscopy images in `data/raw/`
    - Create a CSV file at `data/annotations/labels.csv` with columns:
      ```
-     filename,label
-     img_0001.png,normal
-     img_0002.png,bleb
+     filename,label,quality,flags
+     img_0001.png,0,1,
+     img_0002.png,1,2,foreign
+     img_0003.png,0,3,part
      ```
 
 2. Train the model:

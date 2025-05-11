@@ -12,11 +12,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 def get_dataloaders(img_dir, csv_path, batch_size=32):
     tfms = T.Compose([
         T.Resize((224, 224), antialias=True),
-        #T.ToTensor(),
-	T.Lambda(lambda x: x[:3]              # RGBA → RGB
-        	if x.shape[0] == 4 else
-        	x.repeat(3, 1, 1)            # gray → RGB
-    	),
+        T.Lambda(lambda x: x[:3]              # RGBA → RGB
+            if x.shape[0] == 4 else
+            x.repeat(3, 1, 1)            # gray → RGB
+        ),
         T.Normalize(mean=[0.485, 0.456, 0.406],
                     std=[0.229, 0.224, 0.225]),
     ])
