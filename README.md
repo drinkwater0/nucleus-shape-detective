@@ -11,6 +11,79 @@ A deep learning tool for detecting abnormal nuclear blebs in fluorescence micros
 - Example dataset included for immediate testing
 - Easy training pipeline for custom datasets
 
+## Usage 
+
+You can use latest trained model with web interface. It's hosted online - https://nucleusdetective.streamlit.app 
+
+Or you can download this code and train your own model with your data.
+
+### Prerequisites
+- Python 3.8 or higher
+- CUDA-capable GPU (recommended for training)
+
+### Step-by-Step Installation
+1. Download Python from [python.org](https://www.python.org/downloads/)
+2. Download this project (click "Code" → "Download ZIP")
+3. Extract the ZIP file
+4. Open terminal/command prompt in the extracted folder
+5. Run the Quick Start commands above
+
+### Training Your Own Model
+
+#### Step 1: Prepare Your Data
+1. Place your images in the correct folders:
+   - Normal nuclei → `data/normal/`
+   - Blebbed nuclei → `data/bleb/`
+
+2. Prepare your source data in `data/zdroje.xlsx`:
+   - Source of the image
+   - Highlighted protein
+   - Quality score (1-10)
+   - Any flags (e.g., "foreign", "part")
+
+3. Generate training labels:
+   ```bash
+   python src/prepare_labels.py
+   ```
+
+#### Step 2: Train the Model
+```bash
+python src/train.py
+```
+
+Optional parameters:
+- `--epochs`: Number of training cycles (default: 20)
+- `--lr`: Learning rate (default: 0.0003)
+
+#### Step 3: Evaluate the Model
+```bash
+python src/evaluate.py
+```
+
+### Web Interface
+1. Start the application using the Quick Start commands
+2. Upload nucleus images using the file uploader
+3. View classification results in real-time
+4. See confidence scores for each prediction
+
+
+## Quick Start
+
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run app/app.py
+
+# Mac/Linux
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+streamlit run app/app.py
+```
+
+
 ## Project Structure
 
 ```
@@ -87,164 +160,6 @@ Place your microscopy images in the appropriate directories:
 - `data/normal/` for normal nucleus images
 - `data/bleb/` for nucleus images with blebs
 
-## Prerequisites
-
-- Python 3.8 or higher
-- CUDA-capable GPU (recommended for training)
-
-## Installation
-
-### Step 1: Install Python
-1. Download Python from [python.org](https://www.python.org/downloads/)
-2. During installation, make sure to check "Add Python to PATH"
-3. To verify installation, open Command Prompt (Windows) or Terminal (Mac/Linux) and type:
-   ```
-   python --version
-   ```
-   You should see something like "Python 3.8.0" or higher
-
-### Step 2: Download the Project
-1. Click the green "Code" button on this page
-2. Click "Download ZIP"
-3. Extract the ZIP file to a location of your choice
-4. Open Command Prompt (Windows) or Terminal (Mac/Linux)
-5. Navigate to the extracted folder:
-   ```
-   cd path/to/nucleus-shape-detective
-   ```
-
-### Step 3: Set Up the Environment
-1. Create a virtual environment (this keeps the project's dependencies separate):
-   ```
-   python -m venv venv
-   ```
-
-2. Activate the environment:
-   - On Windows:
-     ```
-     .\venv\Scripts\activate
-     ```
-   - On Mac/Linux:
-     ```
-     source venv/bin/activate
-     ```
-   You'll know it's activated when you see `(venv)` at the start of your command line
-
-3. Install required packages:
-   ```
-   pip install -r requirements.txt
-   ```
-   This might take a few minutes. Wait until it completes.
-
-### Step 4: Run the Application
-1. Start the web interface:
-   ```
-   streamlit run app/app.py
-   ```
-2. Your default web browser should open automatically with the application
-3. If it doesn't open automatically, copy and paste the URL shown in the terminal into your browser
-
-### Troubleshooting
-- If you get a "command not found" error, make sure Python is added to your PATH
-- If you get permission errors, try running the terminal as administrator
-- If the web interface doesn't open, make sure no other application is using port 8501
-
-
-## Usage
-
-### Running the Web Interface
-
-Launch the Streamlit app:
-```bash
-streamlit run app/app.py
-```
-
-The web interface will open in your default browser. You can:
-1. Upload nucleus images using the file uploader
-2. View the classification results in real-time
-3. See the confidence score for each prediction
-
-### Training Your Own Model
-
-#### Step 1: Prepare Your Data
-1. Place your microscopy images in the correct folders:
-   - Put normal nucleus images in `data/normal/`
-   - Put blebbed nucleus images in `data/bleb/`
-
-2. Prepare your source data:
-   - Open `data/zdroje.xlsx` in Excel
-   - Fill in the information for each image:
-     - Source of the image
-     - Highlighted protein
-     - Quality score (1-10)
-     - Any flags (e.g., "foreign" for foreign objects, "part" for partial nuclei)
-
-3. Create source CSV files:
-   - Export data for normal nuclei to `data/normalSource.csv`
-   - Export data for blebbed nuclei to `data/mutantsSource.csv`
-   - Make sure to use semicolon (;) as separator
-   - Include these columns: id, url, article, protein, blank, quality, flags, address
-
-4. Generate training labels:
-   ```
-   python src/prepare_labels.py
-   ```
-   This will create `data/annotations/labels.csv` automatically
-
-#### Step 2: Train the Model
-1. Make sure your virtual environment is activated (you should see `(venv)` in your terminal)
-
-2. Start the training:
-   ```
-   python src/train.py
-   ```
-   This will:
-   - Load your images and labels
-   - Train a ResNet-18 model
-   - Save the trained model as `model.pt`
-   - Show training progress in the terminal
-
-3. Optional: Customize training parameters:
-   ```
-   python src/train.py --epochs 20 --lr 0.0003
-   ```
-   - `--epochs`: Number of training cycles (default: 20)
-   - `--lr`: Learning rate (default: 0.0003)
-
-#### Step 3: Evaluate the Model
-1. Check model performance:
-   ```
-   python src/evaluate.py
-   ```
-   This will:
-   - Generate a classification report
-   - Create a confusion matrix visualization (`confusion_matrix.png`)
-   - Show accuracy metrics
-
-#### Step 4: Use the Model
-1. Start the web interface:
-   ```
-   streamlit run app/app.py
-   ```
-2. Upload your images to test the model
-3. View the classification results and confidence scores
-
-### Training Tips
-- Start with a small dataset to test the pipeline
-- Use high-quality images (quality score ≥ 7)
-- Exclude images with foreign objects or partial nuclei
-- If training is slow, consider using a GPU
-- If results are poor, try:
-  - Increasing the number of epochs
-  - Adjusting the learning rate
-  - Adding more training images
-  - Improving image quality
-
-### Expected Training Time
-- CPU: ~1-2 hours for 1000 images
-- GPU: ~15-30 minutes for 1000 images
-- Progress is shown in the terminal during training
-
 ## Model Details
 
 - Architecture: ResNet-18 (pre-trained on ImageNet)
@@ -265,28 +180,4 @@ The web interface will open in your default browser. You can:
 
 ## License
 
-This project is unlicensed. You may use this code for research purposes only.
-
-
-
-
-
-## Quick Start
-
-```bash
-# Windows
-python -m venv venv
-.\venv\Scripts\activate
-pip install -r requirements.txt
-streamlit run app/app.py
-
-# Mac/Linux
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-streamlit run app/app.py
-```
-
-## Model
-Baseline: ResNet‑18 (torchvision) fine‑tuned for 2 classes. Images are resized
-to 224 × 224 and histogram‑equalised.
+This project is unlicensed. You may use this code as you wish.
