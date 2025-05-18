@@ -40,9 +40,9 @@ def load_example_images(normal_index=0, bleb_index=0):
         bleb_images = sorted([f for f in os.listdir(bleb_dir) if f.endswith(('.png', '.jpg', '.jpeg'))])
         
         if normal_images and bleb_images:
-            # Use modulo to wrap around if index is out of range
-            normal_idx = normal_index % len(normal_images)
-            bleb_idx = bleb_index % len(bleb_images)
+            # Add 10 to the index to show images 10-20
+            normal_idx = (normal_index + 10) % len(normal_images)
+            bleb_idx = (bleb_index + 10) % len(bleb_images)
             
             normal_img = Image.open(os.path.join(normal_dir, normal_images[normal_idx])).convert("RGB")
             bleb_img = Image.open(os.path.join(bleb_dir, bleb_images[bleb_idx])).convert("RGB")
@@ -63,7 +63,7 @@ def main():
     # Show example images
     st.markdown("### Example Images")
     
-    # Add sliders to select example images
+    # Add sliders to select example images (still 0-10 on frontend)
     col1, col2 = st.columns(2)
     with col1:
         normal_index = st.slider("Select Normal Example", 0, 10, 0)
@@ -75,10 +75,10 @@ def main():
         col1, col2 = st.columns(2)
         with col1:
             st.image(normal_img, caption="Example of Normal Nucleus", use_container_width=True)
-            st.markdown("<p style='text-align: center; color: #00ff00;'>✅ Normal</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #00ff00;'>Normal</p>", unsafe_allow_html=True)
         with col2:
             st.image(bleb_img, caption="Example of Blebbed Nucleus", use_container_width=True)
-            st.markdown("<p style='text-align: center; color: #ff0000;'>⚠️ Blebbed</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #ff0000;'>Blebbed</p>", unsafe_allow_html=True)
     
     st.markdown("---")
     st.markdown("### Upload Your Image")
@@ -99,9 +99,9 @@ def main():
             st.markdown("")
         with col2:
             if result == "Normal":
-                st.markdown(f"<h2 style='color: #00ff00;'>✅ {result}</h2>", unsafe_allow_html=True)
+                st.markdown(f"<h2 style='color: #00ff00;'>{result}</h2>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<h2 style='color: #ff0000;'>⚠️ {result}</h2>", unsafe_allow_html=True)
+                st.markdown(f"<h2 style='color: #ff0000;'>{result}</h2>", unsafe_allow_html=True)
         
         # Display confidence
         st.markdown(f"**Confidence:** {confidence:.1%}")
