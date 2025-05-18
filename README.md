@@ -26,7 +26,7 @@ Or you can download this code and train your own model with your data.
 2. Download this project (click "Code" → "Download ZIP")
 3. Extract the ZIP file
 4. Open terminal/command prompt in the extracted folder
-5. Run the Quick Start commands above
+5. Run the Quick Start commands (further below)
 
 ### Training Your Own Model
 
