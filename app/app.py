@@ -29,19 +29,23 @@ def predict_image(model, image, device="cpu"):
         _, predicted = torch.max(output, 1)
     return "Normal" if predicted.item() == 0 else "Bleb", float(probs.max())
 
-def load_example_images():
+def load_example_images(normal_index=0, bleb_index=0):
     """Load example images from the data directory."""
     try:
-        # Get first image from normal and bleb directories
+        # Get images from normal and bleb directories
         normal_dir = "data/normal"
         bleb_dir = "data/bleb"
         
-        normal_images = [f for f in os.listdir(normal_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
-        bleb_images = [f for f in os.listdir(bleb_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
+        normal_images = sorted([f for f in os.listdir(normal_dir) if f.endswith(('.png', '.jpg', '.jpeg'))])
+        bleb_images = sorted([f for f in os.listdir(bleb_dir) if f.endswith(('.png', '.jpg', '.jpeg'))])
         
         if normal_images and bleb_images:
-            normal_img = Image.open(os.path.join(normal_dir, normal_images[2])).convert("RGB")
-            bleb_img = Image.open(os.path.join(bleb_dir, bleb_images[2])).convert("RGB")
+            # Use modulo to wrap around if index is out of range
+            normal_idx = normal_index % len(normal_images)
+            bleb_idx = bleb_index % len(bleb_images)
+            
+            normal_img = Image.open(os.path.join(normal_dir, normal_images[normal_idx])).convert("RGB")
+            bleb_img = Image.open(os.path.join(bleb_dir, bleb_images[bleb_idx])).convert("RGB")
             return normal_img, bleb_img
     except Exception as e:
         st.warning(f"Could not load example images: {str(e)}")
@@ -58,7 +62,15 @@ def main():
     
     # Show example images
     st.markdown("### Example Images")
-    normal_img, bleb_img = load_example_images()
+    
+    # Add sliders to select example images
+    col1, col2 = st.columns(2)
+    with col1:
+        normal_index = st.slider("Select Normal Example", 0, 10, 0)
+    with col2:
+        bleb_index = st.slider("Select Bleb Example", 0, 10, 0)
+    
+    normal_img, bleb_img = load_example_images(normal_index, bleb_index)
     if normal_img and bleb_img:
         col1, col2 = st.columns(2)
         with col1:
