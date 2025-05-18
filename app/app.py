@@ -5,6 +5,7 @@ import torchvision
 from torchvision import transforms as T
 from PIL import Image
 import numpy as np
+import os
 
 def load_model(model_path, device="cpu"):
     model = torchvision.models.resnet18()
@@ -28,6 +29,24 @@ def predict_image(model, image, device="cpu"):
         _, predicted = torch.max(output, 1)
     return "Normal" if predicted.item() == 0 else "Bleb", float(probs.max())
 
+def load_example_images():
+    """Load example images from the data directory."""
+    try:
+        # Get first image from normal and bleb directories
+        normal_dir = "data/normal"
+        bleb_dir = "data/bleb"
+        
+        normal_images = [f for f in os.listdir(normal_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
+        bleb_images = [f for f in os.listdir(bleb_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
+        
+        if normal_images and bleb_images:
+            normal_img = Image.open(os.path.join(normal_dir, normal_images[0])).convert("RGB")
+            bleb_img = Image.open(os.path.join(bleb_dir, bleb_images[0])).convert("RGB")
+            return normal_img, bleb_img
+    except Exception as e:
+        st.warning(f"Could not load example images: {str(e)}")
+    return None, None
+
 def main():
     st.set_page_config(page_title="Nucleus‑Shape Detective")
     st.title("Nucleus‑Shape Detective")
@@ -36,6 +55,21 @@ def main():
     # Load model once at startup
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = load_model("model.pt", device)
+    
+    # Show example images
+    st.markdown("### Example Images")
+    normal_img, bleb_img = load_example_images()
+    if normal_img and bleb_img:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.image(normal_img, caption="Example of Normal Nucleus", use_container_width=True)
+            st.markdown("<p style='text-align: center; color: #00ff00;'>✅ Normal</p>", unsafe_allow_html=True)
+        with col2:
+            st.image(bleb_img, caption="Example of Blebbed Nucleus", use_container_width=True)
+            st.markdown("<p style='text-align: center; color: #ff0000;'>⚠️ Blebbed</p>", unsafe_allow_html=True)
+    
+    st.markdown("---")
+    st.markdown("### Upload Your Image")
     
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
