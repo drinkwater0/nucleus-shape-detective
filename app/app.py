@@ -40,8 +40,8 @@ def load_example_images():
         bleb_images = [f for f in os.listdir(bleb_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
         
         if normal_images and bleb_images:
-            normal_img = Image.open(os.path.join(normal_dir, normal_images[0])).convert("RGB")
-            bleb_img = Image.open(os.path.join(bleb_dir, bleb_images[0])).convert("RGB")
+            normal_img = Image.open(os.path.join(normal_dir, normal_images[2])).convert("RGB")
+            bleb_img = Image.open(os.path.join(bleb_dir, bleb_images[2])).convert("RGB")
             return normal_img, bleb_img
     except Exception as e:
         st.warning(f"Could not load example images: {str(e)}")
